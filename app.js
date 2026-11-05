@@ -6,7 +6,13 @@ let tentativas = 1;
 function exibirTextoNaTela(tag, texto) {
     let campo = document.querySelector(tag);
     campo.innerHTML = texto;
-    responsiveVoice.speak(texto, 'Brazilian Portuguese Female', {rate:1.2});
+    if (window.responsiveVoice) {
+        try {
+            responsiveVoice.speak(texto, 'Brazilian Portuguese Female', {rate:1.2});
+        } catch (erro) {
+            console.warn('Narração indisponível.');
+        }
+    }
 }
 
 function exibirMensagemInicial() {
@@ -17,7 +23,12 @@ function exibirMensagemInicial() {
 exibirMensagemInicial();
 
 function verificarChute() {
-    let chute = document.querySelector('input').value;
+    let chute = Number(document.querySelector('input').value);
+
+    if (!Number.isInteger(chute) || chute < 1 || chute > numeroLimite) {
+        exibirTextoNaTela('p', 'Digite um número inteiro entre 1 e 100.');
+        return;
+    }
     
     if (chute == numeroSecreto) {
         exibirTextoNaTela('h1', 'Parabéns! Você Acertou!');
@@ -47,7 +58,6 @@ function gerarNumeroAleatorio() {
         return gerarNumeroAleatorio();
     } else {
         listaDeNumerosSorteados.push(numeroEscolhido);
-        console.log(listaDeNumerosSorteados)
         return numeroEscolhido;
     }
 }
